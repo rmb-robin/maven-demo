@@ -26,7 +26,7 @@ public class StrRep {
         while((ln = br.readLine()) != null)
         {
             sb.append(ln
-                .replace("Signature", "Signature")
+                .replace("¡", "\n")
                  ).append(ENDL);
         }
         br.close();
