@@ -42,14 +42,14 @@ public class SentenceTextRequest {
 	public void setStudy(String study) {
 		this.study = study;
 	}
-	/*
+	
 	public DiscreteData getDiscreteData() {
 		return discreteData;
 	}
 	public void setDiscreteData(DiscreteData discreteData) {
 		this.discreteData = discreteData;
 	}
-	*/
+	
 	public boolean isConvertMeasurements() {
 		return convertMeasurements;
 	}

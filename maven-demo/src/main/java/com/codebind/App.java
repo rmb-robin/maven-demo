@@ -7,10 +7,12 @@ import org.junit.Test;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,7 +36,7 @@ public class App {
 
     public static void main(String[] args){
     	
-    	StrRep r = new StrRep();
+    	//StrRep r = new StrRep();
         InputStream is = null;
         OutputStream out =null;
         //String outPutFile="E:/notice/errorpdf/1.txt";
@@ -56,10 +58,12 @@ public class App {
 
                 parser.parse(is, handler, metadata, new ParseContext());
                 String name= dirPathOut+filenames[i]+".txt";
-                r.place(name);
+                //r.place(name);
                 SentenceTextRequest request =  createSentenceTextRequest(name) ; 		//Populate sentence text request with file content data
                 String body = new Gson().toJson(request);
-                PostJSON_Request.PostJSON_Request(body);
+                BufferedWriter bw = new BufferedWriter(new FileWriter(new File(dirPathOut+"JSON"+".txt")));
+                bw.write(body);
+                //PostJSON_Request.PostJSON_Request(body);
             }
             Metadata metadata = new Metadata();
             for (String name : metadata.names()) {
@@ -96,6 +100,44 @@ public class App {
     	 * 4. create a new dicrete data on the sentenceTextRequest
     	 * 5. Return the sentenceTextRequest object
     	 */
+    	File f = new File(path);
+    	StringBuilder sb = new StringBuilder();
+    	String ln;
+        try
+        {
+            //String ENDL = System.getProperty("line.separator");
+
+            
+
+            BufferedReader br = new BufferedReader(new FileReader(f));
+           
+            while((ln = br.readLine()) != null)
+            {
+                sb.append(ln
+                    .replace("¡", "")
+                     );
+            }
+            br.close();
+
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            bw.write(sb.toString());
+            bw.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        SentenceTextRequest str = new SentenceTextRequest();
+		str.setText(sb.toString());
+		DiscreteData dd= str.getDiscreteData();
+		
+		//br.close();
+        
+        
+        
+    	
+    	
+    	/*
     	Pattern pattern = Pattern.compile("(\\d\\d\\d) (\\d\\d\\d)-(\\d\\d\\d\\d)\\s");
     	 File file = new File(path);
     	 Scanner input = new Scanner(file);
@@ -104,14 +146,15 @@ public class App {
     		 Matcher matcher = pattern.matcher(word);
     		 break;
     	 }
+    	
     	 
 
     	 // we reached the section with numbers
     	 while ((input = br.readLine()) != null) {
     	    // use String.split to split the line, then convert 
     	    //the values to double and process them.  
-    	 }
-    	return new SentenceTextRequest ();
+    	 } */
+    	return str;
     }
 }
 
