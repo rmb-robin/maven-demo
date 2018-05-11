@@ -47,9 +47,8 @@ public class App {
         String dirPathIn="C:/Users/Rabhu/Documents/MST/PDFs/";
         String dirPathOut="C:/Users/Rabhu/Documents/MST/TXTs/";
         File dir = new File(dirPathIn);
-        String justname, fullname, nameAfterPhNo, partONE, partTWO, partTHREE, partFOUR, parts = null;
         String[] filenames = dir.list();
-      
+        String justname, fullname, nameAfterPhNo;
     
         int lenFiles = filenames.length;
         try {
@@ -67,30 +66,14 @@ public class App {
                 fullname = dirPathOut+filenames[i]+".txt";
                 nameAfterPhNo=afterPhNo(justname, fullname);
                 FileSplitter fs=new FileSplitter();
-                for (int j=1; j<=4;j++){
-                	if (j==1){
-                		//parts=fs.partONE(nameAfterPhNo);
-                		parts=partONE(nameAfterPhNo);
-                	}
-                	if (j==2){
-                		parts=fs.partTWO(nameAfterPhNo);
-                        	}
-                	if (j==3){
-                		parts=fs.partTHREE(nameAfterPhNo);
-                        	}
-                	if (j==4){
-                		parts=fs.partFOUR(nameAfterPhNo);
-                        	}
-                	
-                //String name= dirPathOut+filenames[i]+".txt";
-                //r.place(name);
-                String name = parts;
-                SentenceTextRequest request =  createSentenceTextRequest(name) ; 		//Populate sentence text request with file content data
-                String body = new Gson().toJson(request);
-                BufferedWriter bw = new BufferedWriter(new FileWriter(new File(dirPathOut+"JSON"+".txt")));
-                bw.write(body);
-                //PostJSON_Request.PostJSON_Request(body);
-                System.out.println(body);
+                fs.partONE(nameAfterPhNo);
+                String name;
+                for (int j=1; j<=4;j++){                         	
+	                name = nameAfterPhNo+j+".txt";
+	                SentenceTextRequest request =  createSentenceTextRequest(name) ; 		//Populate sentence text request with file content data
+	                String body = new Gson().toJson(request);
+	                //PostJSON_Request.PostJSON_Request(body);
+	                System.out.println(body);
                 }
             }
             Metadata metadata = new Metadata();
@@ -201,40 +184,7 @@ private static String afterPhNo(String justname, String fullname) throws FileNot
      }
 	return nameToRtn;
 }
-private static String partONE(String fullname) throws FileNotFoundException{
-	String line;
-	String nameToRtn = fullname+"1"+".txt";
-	
-	 FileInputStream fis = new FileInputStream(fullname);
-	 FileOutputStream fos = new FileOutputStream(nameToRtn);
-	 
-	 Pattern pattern = Pattern.compile("^(.*)vitals$");
 
-	 try{
-		 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-		 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-		 while ((line=br.readLine())!=null){
-			 Matcher matcher = pattern.matcher(line);
-			 if(matcher.find()){
-				 break;
-			 }
-			 bw.write(line);
-				
-			 			
-			 
-		 }
-		
-		
-		 br.close();
-		 bw.close();
-	 }
-	 catch (IOException e)
-     {
-         e.printStackTrace();
-     }
-	return nameToRtn;
-
-}
 }
 
 

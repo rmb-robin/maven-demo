@@ -15,150 +15,79 @@ import java.util.regex.Pattern;
 public class FileSplitter {
 	public String partONE(String fullname) throws FileNotFoundException{
 		String line;
-		String nameToRtn = fullname+"1"+".txt";
-		
-		 FileInputStream fis = new FileInputStream(fullname);
-		 FileOutputStream fos = new FileOutputStream(nameToRtn);
+		int count=1;
 		 
 		 //Pattern pattern = Pattern.compile("Vitals");
-
-		 try{
+		 //Pattern pattern = Pattern.compile("^Physical\s+Examination");
+		 //Pattern pattern = Pattern.compile("^Assessment\s+");
+		 //Pattern pattern = Pattern.compile("^Plan\s+");
+		 
+		 try{			 
+			 FileInputStream fis = new FileInputStream(fullname);
 			 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-			 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-			 while ((line=br.readLine())!=null){
-				 //Matcher matcher = pattern.matcher(line);
-				 if(line.contains("^(.*)Vitals$")){
-					 break;
-					 
-				 }
-				 			
-				 
-			 }
-			 while ((line=br.readLine())!=null){
-				 
-				 bw.write(line);
-			 }
-			
-			 br.close();
-			 bw.close();
-		 }
-		 catch (IOException e)
-	     {
-	         e.printStackTrace();
-	     }
-		return nameToRtn;
-	
-	}
-	public String partTWO(String fullname) throws FileNotFoundException{
-		String line;
-		String nameToRtn = fullname+"2"+".txt";
-		
-		 FileInputStream fis = new FileInputStream(fullname);
-		 FileOutputStream fos = new FileOutputStream(nameToRtn);
-		 Pattern pattern1 = Pattern.compile("^(.*)Vitals$");
-		 Pattern pattern2 = Pattern.compile("^(.*)NeurologicPsychiatric$");
-		 //Pattern pattern2 = Pattern.compile("bigeminy during hospitalization.");
-
-		 try{
-			 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-			 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-			 while ((line=br.readLine())!=null){
-				 Matcher matcher = pattern1.matcher(line);
-				 if(matcher.find()){
-					 break;
-				 }
-								 
-			 }
-			 while ((line=br.readLine())!=null){
-				 Matcher matcher = pattern2.matcher(line);
-				 if(matcher.find()){
-					 break;
-				 }
-				 bw.write(line);
-			 }
 			 
-			 br.close();
-			 bw.close();
-		 }
-		 catch (IOException e)
-	     {
-	         e.printStackTrace();
-	     }
-		return nameToRtn;
-	
-	}
-	public String partTHREE(String fullname) throws FileNotFoundException{
-		String line;
-		String nameToRtn = fullname+"3"+".txt";
-		
-		 FileInputStream fis = new FileInputStream(fullname);
-		 FileOutputStream fos = new FileOutputStream(nameToRtn);
-		 Pattern pattern1 = Pattern.compile("NeurologicPsychiatric");
-		 Pattern pattern2 = Pattern.compile("bigeminy during hospitalization");
-		 //Pattern pattern2 = Pattern.compile("bigeminy during hospitalization.");
-
-		 try{
-			 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-			 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+			 //FileOutputStream fos = new FileOutputStream(fullname+count+".txt");
+			 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fullname+count+".txt")));
 			 while ((line=br.readLine())!=null){
-				 Matcher matcher = pattern1.matcher(line);
-				 if(matcher.find()){
-					 break;
-				 }
-								 
-			 }
-			 while ((line=br.readLine())!=null){
-				 Matcher matcher = pattern2.matcher(line);
-				 if(matcher.find()){
-					 break;
-				 }
+				 /*
+				 Matcher matcher = pattern.matcher(line);
+				 if (matcher.find()) break;
+				 */
 				 bw.write(line);
-			 }
-			 
-			 br.close();
-			 bw.close();
-		 }
-		 catch (IOException e)
-	     {
-	         e.printStackTrace();
-	     }
-		return nameToRtn;
-	
-	}
-	public String partFOUR(String fullname) throws FileNotFoundException{
-		String line;
-		String nameToRtn = fullname+"4"+".txt";
-		
-		 FileInputStream fis = new FileInputStream(fullname);
-		 FileOutputStream fos = new FileOutputStream(nameToRtn);
-		 Pattern pattern1 = Pattern.compile("bigeminy during hospitalization.");
-		 //Pattern pattern2 = Pattern.compile("bigeminy during hospitalization");
-		 //Pattern pattern2 = Pattern.compile("bigeminy during hospitalization.");
-
-		 try{
-			 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-			 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-			 while ((line=br.readLine())!=null){
-				 Matcher matcher = pattern1.matcher(line);
-				 if(matcher.find()){
+				 if(line.contains("Vitals")){
 					 break;
 				 }
-								 
+				 			 
 			 }
-			 while ((line=br.readLine())!=null){
-				
-				 bw.write(line);
-			 }
-			 
-			 br.close();
 			 bw.close();
+			 count++;
+			 //fos.close();
+			 
+			 BufferedWriter bw1 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fullname+count+".txt")));
+			 //bw1.write(line);
+			 while ((line=br.readLine())!=null){
+				 bw1.write(line);
+				 /*
+				 Matcher matcher = pattern.matcher(line);
+				 if (matcher.find()) break;
+				 */
+				 if(line.contains("Assessment")){
+					 break;
+				 }			 
+			 }
+			 bw1.close();
+			 count++;
+			 
+			 BufferedWriter bw11 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fullname+count+".txt")));
+			 //bw11.write(line);
+			 while ((line=br.readLine())!=null){
+				 bw11.write(line);
+				 /*
+				 Matcher matcher = pattern.matcher(line);
+				 if (matcher.find()) break;
+				 */
+				 if(line.contains("Plan")){
+					 break;
+				 }			 
+			 }
+			 bw11.close();
+			 count++;
+			 
+			 
+			 
+			 BufferedWriter bw1111 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fullname+count+".txt")));
+			 //bw1111.write(line);
+			 while ((line=br.readLine())!=null){
+				 bw1111.write(line);			 
+			 }
+			 bw1111.close();
+			 br.close();
 		 }
 		 catch (IOException e)
 	     {
 	         e.printStackTrace();
 	     }
-		return nameToRtn;
+		return null;
 	
 	}
-	
 }
