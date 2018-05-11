@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 public class FileSplitter {
 	public String partONE(String fullname) throws FileNotFoundException{
 		String line;
+		String part[];
 		int count=1;
 		 
 		 //Pattern pattern = Pattern.compile("Vitals");
@@ -33,6 +34,7 @@ public class FileSplitter {
 				 Matcher matcher = pattern.matcher(line);
 				 if (matcher.find()) break;
 				 */
+				 part = line.split("Vitals");
 				 bw.write(line);
 				 if(line.contains("Vitals")){
 					 break;

@@ -65,16 +65,16 @@ public class App {
                 justname = dirPathOut+filenames[i];
                 fullname = dirPathOut+filenames[i]+".txt";
                 nameAfterPhNo=afterPhNo(justname, fullname);
-                FileSplitter fs=new FileSplitter();
-                fs.partONE(nameAfterPhNo);
+                //FileSplitter fs=new FileSplitter();
+               // fs.partONE(nameAfterPhNo);
                 String name;
-                for (int j=1; j<=4;j++){                         	
-	                name = nameAfterPhNo+j+".txt";
+                //for (int j=1; j<=4;j++){                         	
+	                name = nameAfterPhNo;
 	                SentenceTextRequest request =  createSentenceTextRequest(name) ; 		//Populate sentence text request with file content data
 	                String body = new Gson().toJson(request);
 	                //PostJSON_Request.PostJSON_Request(body);
 	                System.out.println(body);
-                }
+                //}
             }
             Metadata metadata = new Metadata();
             for (String name : metadata.names()) {
@@ -116,14 +116,13 @@ public class App {
     	String ln;
         try
         {
-            //String ENDL = System.getProperty("line.separator");
-
-            
+                    
 
             BufferedReader br = new BufferedReader(new FileReader(f));
            
             while((ln = br.readLine()) != null)
             {
+            	ln=ln.replaceAll("/", " ");
                 sb.append(ln
                     .replace("¡", ".")
                      );
@@ -140,11 +139,7 @@ public class App {
         }
         SentenceTextRequest str = new SentenceTextRequest();
 		str.setText(sb.toString());
-		DiscreteData dd= str.getDiscreteData();
-		
-		
-        
-        
+		DiscreteData dd= str.getDiscreteData();        
         
     	return str;
     }
