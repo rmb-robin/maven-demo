@@ -1,10 +1,10 @@
 package com.codebind;
 
-
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import java.awt.List;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -15,7 +15,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,7 +47,9 @@ public class App {
         String dirPathIn="C:/Users/Rabhu/Documents/MST/PDFs/";
         String dirPathOut="C:/Users/Rabhu/Documents/MST/TXTs/";
         File dir = new File(dirPathIn);
+        String justname, fullname, nameAfterPhNo, partONE, partTWO, partTHREE, partFOUR, parts = null;
         String[] filenames = dir.list();
+      
     
         int lenFiles = filenames.length;
         try {
@@ -57,13 +63,35 @@ public class App {
                 Metadata metadata = new Metadata();
 
                 parser.parse(is, handler, metadata, new ParseContext());
-                String name= dirPathOut+filenames[i]+".txt";
+                justname = dirPathOut+filenames[i];
+                fullname = dirPathOut+filenames[i]+".txt";
+                nameAfterPhNo=afterPhNo(justname, fullname);
+                FileSplitter fs=new FileSplitter();
+                for (int j=1; j<=4;j++){
+                	if (j==1){
+                		//parts=fs.partONE(nameAfterPhNo);
+                		parts=partONE(nameAfterPhNo);
+                	}
+                	if (j==2){
+                		parts=fs.partTWO(nameAfterPhNo);
+                        	}
+                	if (j==3){
+                		parts=fs.partTHREE(nameAfterPhNo);
+                        	}
+                	if (j==4){
+                		parts=fs.partFOUR(nameAfterPhNo);
+                        	}
+                	
+                //String name= dirPathOut+filenames[i]+".txt";
                 //r.place(name);
+                String name = parts;
                 SentenceTextRequest request =  createSentenceTextRequest(name) ; 		//Populate sentence text request with file content data
                 String body = new Gson().toJson(request);
                 BufferedWriter bw = new BufferedWriter(new FileWriter(new File(dirPathOut+"JSON"+".txt")));
                 bw.write(body);
                 //PostJSON_Request.PostJSON_Request(body);
+                System.out.println(body);
+                }
             }
             Metadata metadata = new Metadata();
             for (String name : metadata.names()) {
@@ -114,7 +142,7 @@ public class App {
             while((ln = br.readLine()) != null)
             {
                 sb.append(ln
-                    .replace("¡", "")
+                    .replace("¡", ".")
                      );
             }
             br.close();
@@ -131,31 +159,82 @@ public class App {
 		str.setText(sb.toString());
 		DiscreteData dd= str.getDiscreteData();
 		
-		//br.close();
+		
         
         
         
-    	
-    	
-    	/*
-    	Pattern pattern = Pattern.compile("(\\d\\d\\d) (\\d\\d\\d)-(\\d\\d\\d\\d)\\s");
-    	 File file = new File(path);
-    	 Scanner input = new Scanner(file);
-    	 while (input.hasNext()){
-    		 String word = input.next();
-    		 Matcher matcher = pattern.matcher(word);
-    		 break;
-    	 }
-    	
-    	 
-
-    	 // we reached the section with numbers
-    	 while ((input = br.readLine()) != null) {
-    	    // use String.split to split the line, then convert 
-    	    //the values to double and process them.  
-    	 } */
     	return str;
     }
+
+private static String afterPhNo(String justname, String fullname) throws FileNotFoundException{
+	String line;
+	String nameToRtn = justname+"afterPhNo"+".txt";
+	
+	 FileInputStream fis = new FileInputStream(fullname);
+	 FileOutputStream fos = new FileOutputStream(justname+"afterPhNo"+".txt");
+	 
+	 //StringBuilder sb = new StringBuilder();
+	//Pattern pattern = Pattern.compile("(\\d\\d\\d) (\\d\\d\\d)-(\\d\\d\\d\\d)\\s");
+	 Pattern pattern = Pattern.compile("\\d\\d\\d-\\d\\d\\d\\d");
+
+	 try{
+		 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+		 while ((line=br.readLine())!=null){
+			 
+			 Matcher matcher = pattern.matcher(line);
+			 if(matcher.find()){
+				 break;
+			 }
+			 
+		 } 
+		 while ((line=br.readLine())!=null){
+			 
+			 bw.write(line);
+		 }
+		 br.close();
+		 bw.close();
+	 }
+	 catch (IOException e)
+     {
+         e.printStackTrace();
+     }
+	return nameToRtn;
+}
+private static String partONE(String fullname) throws FileNotFoundException{
+	String line;
+	String nameToRtn = fullname+"1"+".txt";
+	
+	 FileInputStream fis = new FileInputStream(fullname);
+	 FileOutputStream fos = new FileOutputStream(nameToRtn);
+	 
+	 Pattern pattern = Pattern.compile("^(.*)vitals$");
+
+	 try{
+		 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+		 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+		 while ((line=br.readLine())!=null){
+			 Matcher matcher = pattern.matcher(line);
+			 if(matcher.find()){
+				 break;
+			 }
+			 bw.write(line);
+				
+			 			
+			 
+		 }
+		
+		
+		 br.close();
+		 bw.close();
+	 }
+	 catch (IOException e)
+     {
+         e.printStackTrace();
+     }
+	return nameToRtn;
+
+}
 }
 
 
