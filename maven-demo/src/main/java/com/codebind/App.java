@@ -65,7 +65,7 @@ public class App {
                 String name=afterPhNo(justname, fullname);                         
                 
                 SentenceTextRequest request =  createSentenceTextRequest(name) ; 		//Populate sentence text request with file content data
-                request.getDiscreteData().setOrganizationId(OrgId);
+                request.getDiscreteData().setOrganizationId(OrgId);		//Added OrgID
                 request.getDiscreteData().setPatientAccount(filenames[i]);
                 String body = new Gson().toJson(request);
 	            System.out.println(body);  
