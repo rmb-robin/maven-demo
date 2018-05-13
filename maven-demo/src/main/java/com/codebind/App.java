@@ -1,29 +1,26 @@
 package com.codebind;
 
-import static org.junit.Assert.*;
 
-import org.junit.Test;
-
-import java.awt.List;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.io.OutputStream;
+//import java.util.Scanner;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
 import java.io.OutputStreamWriter;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -32,7 +29,6 @@ import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-
 import com.google.gson.Gson;
 
 
@@ -44,11 +40,12 @@ public class App {
         InputStream is = null;
         OutputStream out =null;
         //String outPutFile="E:/notice/errorpdf/1.txt";
-        String dirPathIn="C:/Users/Rabhu/Documents/MST/PDFs/";
-        String dirPathOut="C:/Users/Rabhu/Documents/MST/TXTs/";
+        String dirPathIn="C:/Users/Bryan/Documents/Rabhu/MST/PDFs/";
+        String dirPathOut="C:/Users/Bryan/Documents/Rabhu/MST/TXTs/";
         File dir = new File(dirPathIn);
         String[] filenames = dir.list();
         String justname, fullname, nameAfterPhNo;
+        String OrgId = "5af454323209dd4f7caca37a";   		
     
         int lenFiles = filenames.length;
         try {
@@ -62,19 +59,20 @@ public class App {
                 Metadata metadata = new Metadata();
 
                 parser.parse(is, handler, metadata, new ParseContext());
+                
                 justname = dirPathOut+filenames[i];
                 fullname = dirPathOut+filenames[i]+".txt";
-                nameAfterPhNo=afterPhNo(justname, fullname);
-                //FileSplitter fs=new FileSplitter();
-               // fs.partONE(nameAfterPhNo);
-                String name;
-                //for (int j=1; j<=4;j++){                         	
-	                name = nameAfterPhNo;
-	                SentenceTextRequest request =  createSentenceTextRequest(name) ; 		//Populate sentence text request with file content data
-	                String body = new Gson().toJson(request);
-	                //PostJSON_Request.PostJSON_Request(body);
-	                System.out.println(body);
-                //}
+                String name=afterPhNo(justname, fullname);                         
+                
+                SentenceTextRequest request =  createSentenceTextRequest(name) ; 		//Populate sentence text request with file content data
+                request.getDiscreteData().setOrganizationId(OrgId);
+                request.getDiscreteData().setPatientAccount(filenames[i]);
+                String body = new Gson().toJson(request);
+	            System.out.println(body);  
+	            PostJSON_Request PJR = null;
+                String response = PJR.PostJSON(body);
+	            System.out.println(response);
+               // }
             }
             Metadata metadata = new Metadata();
             for (String name : metadata.names()) {
@@ -116,16 +114,19 @@ public class App {
     	String ln;
         try
         {
-                    
+            //String ENDL = System.getProperty("line.separator");          
 
             BufferedReader br = new BufferedReader(new FileReader(f));
            
             while((ln = br.readLine()) != null)
             {
-            	ln=ln.replaceAll("/", " ");
+            	ln=ln.replaceAll("/",  " ");
+            	ln=ln.replaceAll("\"", " ");
                 sb.append(ln
                     .replace("¡", ".")
-                     );
+                     );             
+                
+                        
             }
             br.close();
 
@@ -139,48 +140,43 @@ public class App {
         }
         SentenceTextRequest str = new SentenceTextRequest();
 		str.setText(sb.toString());
-		DiscreteData dd= str.getDiscreteData();        
-        
+		DiscreteData dd= str.getDiscreteData();		
     	return str;
     }
 
-private static String afterPhNo(String justname, String fullname) throws FileNotFoundException{
-	String line;
-	String nameToRtn = justname+"afterPhNo"+".txt";
+	private static String afterPhNo(String justname, String fullname) throws FileNotFoundException{
+		String line;
+		String nameToRtn = justname+"afterPhNo"+".txt";
+		
+		 FileInputStream fis = new FileInputStream(fullname);
+		 FileOutputStream fos = new FileOutputStream(justname+"afterPhNo"+".txt");
+		 
+		 Pattern pattern = Pattern.compile("\\d\\d\\d-\\d\\d\\d\\d");
 	
-	 FileInputStream fis = new FileInputStream(fullname);
-	 FileOutputStream fos = new FileOutputStream(justname+"afterPhNo"+".txt");
-	 
-	 //StringBuilder sb = new StringBuilder();
-	//Pattern pattern = Pattern.compile("(\\d\\d\\d) (\\d\\d\\d)-(\\d\\d\\d\\d)\\s");
-	 Pattern pattern = Pattern.compile("\\d\\d\\d-\\d\\d\\d\\d");
-
-	 try{
-		 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-		 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-		 while ((line=br.readLine())!=null){
-			 
-			 Matcher matcher = pattern.matcher(line);
-			 if(matcher.find()){
-				 break;
+		 try{
+			 BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+			 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+			 while ((line=br.readLine())!=null){
+				 
+				 Matcher matcher = pattern.matcher(line);
+				 if(matcher.find()){
+					 break;
+				 }
+				 
+			 } 
+			 while ((line=br.readLine())!=null){
+				 
+				 bw.write(line);
 			 }
-			 
-		 } 
-		 while ((line=br.readLine())!=null){
-			 
-			 bw.write(line);
+			 br.close();
+			 bw.close();
 		 }
-		 br.close();
-		 bw.close();
-	 }
-	 catch (IOException e)
-     {
-         e.printStackTrace();
-     }
-	return nameToRtn;
-}
+		 catch (IOException e)
+	     {
+	         e.printStackTrace();
+	     }
+		return nameToRtn;
+	}
+
 
 }
-
-
-
