@@ -66,12 +66,12 @@ public class App {
                 
                 SentenceTextRequest request =  createSentenceTextRequest(name) ; 		//Populate sentence text request with file content data
                 request.getDiscreteData().setOrganizationId(OrgId);		//Added OrgID
-                request.getDiscreteData().setPatientAccount(filenames[i]);
+                System.out.println(request.getDiscreteData().getOrganizationId());
+                request.getDiscreteData().setPatientAccount(filenames[i]); //Added PatientAccount
                 String body = new Gson().toJson(request);
 	            System.out.println(body);  
-	            PostJSON_Request PJR = null;
-                String response = PJR.PostJSON(body);
-	            System.out.println(response);
+	            //String response = PostJSON_Request.PostJSON(body);
+	            //System.out.println(response);
                // }
             }
             Metadata metadata = new Metadata();
@@ -140,7 +140,7 @@ public class App {
         }
         SentenceTextRequest str = new SentenceTextRequest();
 		str.setText(sb.toString());
-		DiscreteData dd= str.getDiscreteData();		
+		//DiscreteData dd= str.getDiscreteData();		
     	return str;
     }
 

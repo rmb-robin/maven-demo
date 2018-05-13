@@ -24,6 +24,8 @@ public class DiscreteData {
 	
 	private String organizationId; 
 	
+	DiscreteData dd = new DiscreteData();
+	
 	public String getReadingLocation() {
 		return readingLocation;
 	}
